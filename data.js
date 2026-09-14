@@ -12,7 +12,7 @@ const servers = [
     name: "Roblox Central",
     icon: "🎮",
     description: "Roblox gaming and events.",
-    members: "1,200+",
+    members: "24+ players",
     invite: "#"
   },
 
@@ -20,7 +20,7 @@ const servers = [
     name: "Tournament Zone",
     icon: "🏆",
     description: "Competitive gaming tournaments.",
-    members: "800+",
+    members: "983+ Players",
     invite: "#"
   },
 
@@ -150,8 +150,8 @@ const voiceChannels = [
 
 const tournaments = [
   {
-    name: "🔥 Creator HQ Showdown",
-    game: "Roblox",
+    name: "🔥 Fortnight HQ Showdown",
+    game: "Fortnight",
     date: "Saturday",
     time: "7:00 PM",
     prize: "🏆 Champion Role",
@@ -170,8 +170,8 @@ const tournaments = [
   },
 
   {
-    name: "👑 Champions Cup",
-    game: "Roblox",
+    name: "👑 Fortnight Champions Cup",
+    game: "Fortnight",
     date: "Next Week",
     time: "8:00 PM",
     prize: "👑 Champion + XP",
@@ -207,27 +207,27 @@ const messages = [
 
 const leaderboardPlayers = [
   {
-    name: "ShadowKing",
-    xp: 3200
+    name: "QuintYT",
+    xp: 93826
   },
 
   {
-    name: "GalaxyPro",
-    xp: 2750
+    name: "Hassan",
+    xp: 27542
   },
 
   {
-    name: "StormRunner",
-    xp: 2400
+    name: "KitKat",
+    xp: 9746
   },
 
   {
-    name: "BattleBeast",
-    xp: 1950
+    name: "CoolCat",
+    xp: 6425
   },
 
   {
-    name: "DarkKnight",
-    xp: 1700
+    name: "GamerPro",
+    xp: 2938
   }
 ];
