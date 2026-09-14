@@ -1,0 +1,251 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creator HQ | Community Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="background"></div>
+
+  <nav class="navbar">
+    <div class="logo">⚡ Creator HQ</div>
+
+    <div class="nav-links">
+      <button onclick="showPage('home')">🏠 Home</button>
+      <button onclick="showPage('messages')">💬 Messages</button>
+      <button onclick="showPage('servers')">🌐 Servers</button>
+      <button onclick="showPage('promotions')">📣 Promotions</button>
+      <button onclick="showPage('ranks')">🏆 Ranks</button>
+      <button onclick="showPage('voice')">🔊 Voice</button>
+      <button onclick="showPage('tournaments')">🏟️ Tournaments</button>
+    </div>
+
+    <div class="profile-mini">
+      <span id="navUsername">PLAYER</span>
+      <span id="navLevel">LVL 1</span>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- HOME -->
+    <section id="home" class="page active">
+
+      <div class="hero">
+        <p class="eyebrow">COMMUNITY HUB</p>
+        <h1>Welcome to <span>Creator HQ</span></h1>
+        <p>
+          Your gaming community dashboard for servers, messages,
+          tournaments, ranks, promotions and voice events.
+        </p>
+
+        <div class="hero-buttons">
+          <button class="primary" onclick="joinDiscord()">
+            💬 Join Our Discord
+          </button>
+
+          <button class="secondary" onclick="showPage('tournaments')">
+            🏆 View Tournaments
+          </button>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+
+        <div class="card">
+          <h3>👤 Username</h3>
+          <input id="usernameInput" maxlength="16" placeholder="Enter username">
+          <button onclick="changeUsername()">Save Username</button>
+        </div>
+
+        <div class="card">
+          <h3>⭐ Level</h3>
+          <div class="big-number" id="homeLevel">1</div>
+          <div class="xp-bar">
+            <div id="xpFill"></div>
+          </div>
+          <p><span id="xpAmount">0</span> / <span id="xpNeeded">100</span> XP</p>
+        </div>
+
+        <div class="card">
+          <h3>🏆 Rank</h3>
+          <div class="rank-badge" id="homeRank">Member</div>
+          <p>Keep earning XP to rank up!</p>
+        </div>
+
+        <div class="card">
+          <h3>🎮 Matches</h3>
+          <div class="big-number" id="matchCount">0</div>
+          <button onclick="playMatch()">Play Match</button>
+        </div>
+
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <span>⭐ XP</span>
+          <strong id="totalXP">0</strong>
+        </div>
+
+        <div class="stat">
+          <span>🏆 Wins</span>
+          <strong id="wins">0</strong>
+        </div>
+
+        <div class="stat">
+          <span>💀 Kills</span>
+          <strong id="kills">0</strong>
+        </div>
+
+        <div class="stat">
+          <span>🔥 Streak</span>
+          <strong id="streak">0</strong>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- MESSAGES -->
+    <section id="messages" class="page">
+
+      <div class="page-header">
+        <p class="eyebrow">COMMUNITY CHAT</p>
+        <h2>💬 Messages</h2>
+        <p>Community announcements and recent activity.</p>
+      </div>
+
+      <div class="messages-container" id="messageList"></div>
+
+      <div class="message-input">
+        <input id="messageInput" placeholder="Write a message...">
+        <button onclick="sendMessage()">Send</button>
+      </div>
+
+    </section>
+
+
+    <!-- SERVERS -->
+    <section id="servers" class="page">
+
+      <div class="page-header">
+        <p class="eyebrow">COMMUNITY DIRECTORY</p>
+        <h2>🌐 Servers</h2>
+        <p>Discover gaming communities.</p>
+      </div>
+
+      <div class="server-grid" id="serverList"></div>
+
+    </section>
+
+
+    <!-- PROMOTIONS -->
+    <section id="promotions" class="page">
+
+      <div class="page-header">
+        <p class="eyebrow">SERVER PROMOTIONS</p>
+        <h2>📣 Promotions</h2>
+        <p>Find communities, creators and gaming events.</p>
+      </div>
+
+      <div class="promotion-grid" id="promotionList"></div>
+
+    </section>
+
+
+    <!-- RANKS -->
+    <section id="ranks" class="page">
+
+      <div class="page-header">
+        <p class="eyebrow">LEVEL SYSTEM</p>
+        <h2>🏆 Ranks</h2>
+        <p>Earn XP and unlock new community ranks.</p>
+      </div>
+
+      <div class="rank-grid" id="rankList"></div>
+
+      <h2 class="leaderboard-title">🔥 Leaderboard</h2>
+
+      <div class="leaderboard" id="leaderboard"></div>
+
+    </section>
+
+
+    <!-- VOICE -->
+    <section id="voice" class="page">
+
+      <div class="page-header">
+        <p class="eyebrow">VOICE LOUNGE</p>
+        <h2>🔊 Voice Channels</h2>
+        <p>See the community's available voice rooms.</p>
+      </div>
+
+      <div class="voice-grid" id="voiceList"></div>
+
+      <div class="voice-notice">
+        <h3>🔊 Want to join voice?</h3>
+        <p>
+          Click the Discord button to open the real Discord server
+          and join the voice channel there.
+        </p>
+
+        <button class="primary" onclick="joinDiscord()">
+          Open Discord
+        </button>
+      </div>
+
+    </section>
+
+
+    <!-- TOURNAMENTS -->
+    <section id="tournaments" class="page">
+
+      <div class="page-header">
+        <p class="eyebrow">COMPETE FOR GLORY</p>
+        <h2>🏟️ Tournaments</h2>
+        <p>Compete in community tournaments and climb the leaderboard.</p>
+      </div>
+
+      <div class="tournament-grid" id="tournamentList"></div>
+
+      <div class="tournament-rules card">
+        <h2>📜 Tournament Rules</h2>
+
+        <ul>
+          <li>🤝 Respect every player.</li>
+          <li>🚫 No cheating or exploiting.</li>
+          <li>🎮 Follow the tournament host's instructions.</li>
+          <li>⏰ Be ready before your scheduled match.</li>
+          <li>🏆 Winners must provide proof when requested.</li>
+          <li>🔒 Never share private information.</li>
+        </ul>
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+    <div>
+      <strong>⚡ Creator HQ</strong>
+      <p>Gaming • Roblox • Tournaments • Community</p>
+    </div>
+
+    <button onclick="joinDiscord()">💬 Join Discord</button>
+  </footer>
+
+
+  <div id="notification"></div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
+```
