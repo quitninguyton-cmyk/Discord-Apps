@@ -231,4 +231,3 @@ const leaderboardPlayers = [
     xp: 1700
   }
 ];
-```
