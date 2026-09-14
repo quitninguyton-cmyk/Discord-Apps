@@ -1,4 +1,4 @@
-```js
+
 const servers = [
   {
     name: "Creator HQ",
