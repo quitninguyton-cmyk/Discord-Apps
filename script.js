@@ -1,6 +1,9 @@
 ```js
 const DISCORD_INVITE = "https://discord.gg/Rb64dunDJ";
 
+/* =========================
+   PLAYER DATA
+========================= */
 
 let player = JSON.parse(
   localStorage.getItem("creatorHQPlayer")
@@ -15,6 +18,10 @@ let player = JSON.parse(
 };
 
 
+/* =========================
+   SAVE GAME
+========================= */
+
 function saveGame() {
   localStorage.setItem(
     "creatorHQPlayer",
@@ -23,61 +30,95 @@ function saveGame() {
 }
 
 
+/* =========================
+   PAGE NAVIGATION
+========================= */
+
 function showPage(pageId) {
 
-  document.querySelectorAll(".page").forEach(page => {
+  // Hide every page
+  const pages = document.querySelectorAll(".page");
+
+  pages.forEach(page => {
     page.classList.remove("active");
   });
 
-  const page = document.getElementById(pageId);
+  // Find requested page
+  const selectedPage =
+    document.getElementById(pageId);
 
-  if (page) {
-    page.classList.add("active");
+  // If it exists, show it
+  if (selectedPage) {
+
+    selectedPage.classList.add("active");
+
+    console.log(
+      "Opened page:",
+      pageId
+    );
+
+    // Scroll to top
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  } else {
+
+    console.error(
+      "Page not found:",
+      pageId
+    );
+
   }
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
 }
 
+
+/* =========================
+   DISCORD
+========================= */
 
 function joinDiscord() {
-  window.open(DISCORD_INVITE, "_blank");
+
+  window.open(
+    DISCORD_INVITE,
+    "_blank"
+  );
+
 }
 
+
+/* =========================
+   NOTIFICATIONS
+========================= */
 
 function notify(message) {
 
-  const box = document.getElementById("notification");
+  const box =
+    document.getElementById("notification");
+
+  if (!box) return;
 
   box.textContent = message;
+
   box.classList.add("show");
 
   setTimeout(() => {
+
     box.classList.remove("show");
+
   }, 3000);
 }
 
 
+/* =========================
+   XP SYSTEM
+========================= */
+
 function requiredXP() {
+
   return player.level * 100;
-}
 
-
-function getRank() {
-
-  let currentRank = ranks[0];
-
-  for (const rank of ranks) {
-
-    if (getTotalXP() >= rank.required) {
-      currentRank = rank;
-    }
-
-  }
-
-  return currentRank;
 }
 
 
@@ -85,8 +126,14 @@ function getTotalXP() {
 
   let total = 0;
 
-  for (let i = 1; i < player.level; i++) {
-    total += i * 100;
+  for (
+    let level = 1;
+    level < player.level;
+    level++
+  ) {
+
+    total += level * 100;
+
   }
 
   total += player.xp;
@@ -99,67 +146,121 @@ function addXP(amount) {
 
   player.xp += amount;
 
-  while (player.xp >= requiredXP()) {
+  while (
+    player.xp >= requiredXP()
+  ) {
 
     player.xp -= requiredXP();
 
     player.level++;
 
     notify(
-      `🎉 LEVEL UP! You reached Level ${player.level}!`
+      `🎉 LEVEL UP! Level ${player.level}!`
     );
+
   }
 
   saveGame();
+
   updateUI();
 }
 
+
+/* =========================
+   RANK SYSTEM
+========================= */
+
+function getRank() {
+
+  let currentRank = ranks[0];
+
+  for (const rank of ranks) {
+
+    if (
+      getTotalXP() >= rank.required
+    ) {
+
+      currentRank = rank;
+
+    }
+
+  }
+
+  return currentRank;
+}
+
+
+/* =========================
+   USERNAME
+========================= */
 
 function changeUsername() {
 
   const input =
-    document.getElementById("usernameInput");
+    document.getElementById(
+      "usernameInput"
+    );
 
-  const name = input.value.trim();
+  if (!input) return;
+
+  const name =
+    input.value.trim();
 
   if (name.length < 3) {
-    notify("❌ Username must be at least 3 characters.");
+
+    notify(
+      "❌ Username must be at least 3 characters."
+    );
+
     return;
   }
 
-  player.name = name.substring(0, 16);
+  player.name =
+    name.substring(0, 16);
 
   input.value = "";
 
   saveGame();
+
   updateUI();
 
-  notify(`👤 Username changed to ${player.name}!`);
+  notify(
+    `👤 Username changed to ${player.name}!`
+  );
 }
 
+
+/* =========================
+   MATCH SYSTEM
+========================= */
 
 function playMatch() {
 
   const kills =
-    Math.floor(Math.random() * 10) + 1;
+    Math.floor(
+      Math.random() * 10
+    ) + 1;
 
   const won =
     Math.random() < 0.25;
 
   player.matches++;
+
   player.kills += kills;
 
-  let xpReward = kills * 20;
+  let xpReward =
+    kills * 20;
 
   if (won) {
 
     player.wins++;
+
     player.streak++;
 
     xpReward += 300;
 
     notify(
-      `🏆 VICTORY! +${kills} kills • +${xpReward} XP`
+      `🏆 VICTORY! ${kills} kills • +${xpReward} XP`
     );
 
   } else {
@@ -167,21 +268,31 @@ function playMatch() {
     player.streak = 0;
 
     notify(
-      `🎮 Match finished! +${kills} kills • +${xpReward} XP`
+      `🎮 Match finished! ${kills} kills • +${xpReward} XP`
     );
+
   }
 
   addXP(xpReward);
 
   saveGame();
+
   updateUI();
 }
 
 
+/* =========================
+   MESSAGES
+========================= */
+
 function renderMessages() {
 
   const container =
-    document.getElementById("messageList");
+    document.getElementById(
+      "messageList"
+    );
+
+  if (!container) return;
 
   container.innerHTML = "";
 
@@ -198,16 +309,28 @@ function renderMessages() {
       </div>
 
       <div class="message-content">
+
         <div class="message-top">
-          <strong>${message.user}</strong>
-          <span>${message.time}</span>
+
+          <strong>
+            ${message.user}
+          </strong>
+
+          <span>
+            ${message.time}
+          </span>
+
         </div>
 
-        <p>${message.text}</p>
+        <p>
+          ${message.text}
+        </p>
+
       </div>
     `;
 
     container.appendChild(div);
+
   });
 }
 
@@ -215,20 +338,34 @@ function renderMessages() {
 function sendMessage() {
 
   const input =
-    document.getElementById("messageInput");
+    document.getElementById(
+      "messageInput"
+    );
 
-  const text = input.value.trim();
+  if (!input) return;
+
+  const text =
+    input.value.trim();
 
   if (!text) {
-    notify("❌ Type a message first.");
+
+    notify(
+      "❌ Type a message first."
+    );
+
     return;
   }
 
   messages.unshift({
+
     user: player.name,
+
     icon: "👤",
+
     text: text,
+
     time: "Just now"
+
   });
 
   input.value = "";
@@ -237,14 +374,24 @@ function sendMessage() {
 
   addXP(10);
 
-  notify("💬 Message posted!");
+  notify(
+    "💬 Message posted!"
+  );
 }
 
+
+/* =========================
+   SERVERS
+========================= */
 
 function renderServers() {
 
   const container =
-    document.getElementById("serverList");
+    document.getElementById(
+      "serverList"
+    );
+
+  if (!container) return;
 
   container.innerHTML = "";
 
@@ -253,36 +400,73 @@ function renderServers() {
     const div =
       document.createElement("div");
 
-    div.className = "server-card";
+    div.className =
+      "server-card";
 
     div.innerHTML = `
+
       <div class="server-icon">
         ${server.icon}
       </div>
 
-      <h3>${server.name}</h3>
+      <h3>
+        ${server.name}
+      </h3>
 
-      <p>${server.description}</p>
+      <p>
+        ${server.description}
+      </p>
 
       <div class="server-members">
         👥 ${server.members} members
       </div>
 
       <button
-        onclick="window.open('${server.invite}', '_blank')">
+        onclick="openServer('${server.invite}')">
         Join Server
       </button>
+
     `;
 
     container.appendChild(div);
+
   });
 }
 
 
+function openServer(invite) {
+
+  if (
+    !invite ||
+    invite === "#"
+  ) {
+
+    notify(
+      "ℹ️ This server doesn't have an invite yet."
+    );
+
+    return;
+  }
+
+  window.open(
+    invite,
+    "_blank"
+  );
+}
+
+
+/* =========================
+   PROMOTIONS
+========================= */
+
 function renderPromotions() {
 
   const container =
-    document.getElementById("promotionList");
+    document.getElementById(
+      "promotionList"
+    );
+
+  if (!container) return;
 
   container.innerHTML = "";
 
@@ -291,9 +475,11 @@ function renderPromotions() {
     const div =
       document.createElement("div");
 
-    div.className = "promotion-card";
+    div.className =
+      "promotion-card";
 
     div.innerHTML = `
+
       <div class="promotion-icon">
         ${promotion.icon}
       </div>
@@ -302,24 +488,39 @@ function renderPromotions() {
         ${promotion.tag}
       </span>
 
-      <h3>${promotion.title}</h3>
+      <h3>
+        ${promotion.title}
+      </h3>
 
-      <p>${promotion.description}</p>
+      <p>
+        ${promotion.description}
+      </p>
 
-      <button onclick="joinDiscord()">
+      <button
+        onclick="joinDiscord()">
         Learn More
       </button>
+
     `;
 
     container.appendChild(div);
+
   });
 }
 
 
+/* =========================
+   RANKS
+========================= */
+
 function renderRanks() {
 
   const container =
-    document.getElementById("rankList");
+    document.getElementById(
+      "rankList"
+    );
+
+  if (!container) return;
 
   container.innerHTML = "";
 
@@ -333,80 +534,120 @@ function renderRanks() {
 
     div.className =
       "rank-card " +
-      (unlocked ? "unlocked" : "locked");
+      (
+        unlocked
+          ? "unlocked"
+          : "locked"
+      );
 
     div.innerHTML = `
+
       <div class="rank-icon">
         ${rank.icon}
       </div>
 
-      <h3>${rank.name}</h3>
+      <h3>
+        ${rank.name}
+      </h3>
 
-      <strong>${rank.required} XP</strong>
+      <strong>
+        ${rank.required} XP
+      </strong>
 
-      <p>${rank.description}</p>
+      <p>
+        ${rank.description}
+      </p>
 
       <div class="rank-status">
+
         ${
           unlocked
             ? "✅ UNLOCKED"
             : "🔒 LOCKED"
         }
+
       </div>
+
     `;
 
     container.appendChild(div);
+
   });
 }
 
 
+/* =========================
+   LEADERBOARD
+========================= */
+
 function renderLeaderboard() {
 
   const container =
-    document.getElementById("leaderboard");
+    document.getElementById(
+      "leaderboard"
+    );
+
+  if (!container) return;
 
   const players = [
     ...leaderboardPlayers,
+
     {
       name: player.name,
       xp: getTotalXP()
     }
   ];
 
-  players.sort((a, b) => b.xp - a.xp);
+  players.sort(
+    (a, b) => b.xp - a.xp
+  );
 
   container.innerHTML = "";
 
-  players.forEach((person, index) => {
+  players.forEach(
+    (person, index) => {
 
-    const div =
-      document.createElement("div");
+      const div =
+        document.createElement("div");
 
-    div.className = "leaderboard-row";
+      div.className =
+        "leaderboard-row";
 
-    div.innerHTML = `
-      <div class="leader-position">
-        #${index + 1}
-      </div>
+      div.innerHTML = `
 
-      <div class="leader-name">
-        👤 ${person.name}
-      </div>
+        <div class="leader-position">
+          #${index + 1}
+        </div>
 
-      <div class="leader-xp">
-        ⭐ ${person.xp} XP
-      </div>
-    `;
+        <div class="leader-name">
+          👤 ${person.name}
+        </div>
 
-    container.appendChild(div);
-  });
+        <div class="leader-xp">
+          ⭐ ${person.xp} XP
+        </div>
+
+      `;
+
+      container.appendChild(div);
+
+    }
+  );
 }
 
+
+/* =========================
+   VOICE CHANNELS
+========================= */
 
 function renderVoice() {
 
   const container =
-    document.getElementById("voiceList");
+    document.getElementById(
+      "voiceList"
+    );
+
+  if (!container) return;
 
   container.innerHTML = "";
 
@@ -415,78 +656,124 @@ function renderVoice() {
     const div =
       document.createElement("div");
 
-    div.className = "voice-card";
+    div.className =
+      "voice-card";
 
     const full =
       channel.users >= channel.limit;
 
     div.innerHTML = `
+
       <div class="voice-icon">
         ${channel.icon}
       </div>
 
       <div>
-        <h3>${channel.name}</h3>
+
+        <h3>
+          ${channel.name}
+        </h3>
 
         <p>
           👥 ${channel.users}/${channel.limit}
         </p>
+
       </div>
 
-      <span class="${full ? "full" : "online"}">
-        ${full ? "FULL" : "ACTIVE"}
+      <span
+        class="${
+          full
+            ? "full"
+            : "online"
+        }">
+
+        ${
+          full
+            ? "FULL"
+            : "ACTIVE"
+        }
+
       </span>
+
     `;
 
     container.appendChild(div);
+
   });
 }
 
 
+/* =========================
+   TOURNAMENTS
+========================= */
+
 function renderTournaments() {
 
   const container =
-    document.getElementById("tournamentList");
+    document.getElementById(
+      "tournamentList"
+    );
+
+  if (!container) return;
 
   container.innerHTML = "";
 
-  tournaments.forEach(tournament => {
+  tournaments.forEach(
+    tournament => {
 
-    const div =
-      document.createElement("div");
+      const div =
+        document.createElement("div");
 
-    div.className = "tournament-card";
+      div.className =
+        "tournament-card";
 
-    div.innerHTML = `
-      <div class="tournament-top">
-        <span class="tag">
-          ${tournament.status}
-        </span>
+      div.innerHTML = `
 
-        <span>
-          ${tournament.players}
-        </span>
-      </div>
+        <div class="tournament-top">
 
-      <h3>${tournament.name}</h3>
+          <span class="tag">
+            ${tournament.status}
+          </span>
 
-      <p>🎮 ${tournament.game}</p>
+          <span>
+            ${tournament.players}
+          </span>
 
-      <p>📅 ${tournament.date}</p>
+        </div>
 
-      <p>⏰ ${tournament.time}</p>
+        <h3>
+          ${tournament.name}
+        </h3>
 
-      <div class="prize">
-        ${tournament.prize}
-      </div>
+        <p>
+          🎮 ${tournament.game}
+        </p>
 
-      <button onclick="registerTournament('${tournament.name}')">
-        🏆 Register
-      </button>
-    `;
+        <p>
+          📅 ${tournament.date}
+        </p>
 
-    container.appendChild(div);
-  });
+        <p>
+          ⏰ ${tournament.time}
+        </p>
+
+        <div class="prize">
+          ${tournament.prize}
+        </div>
+
+        <button
+          onclick="registerTournament('${tournament.name}')">
+
+          🏆 Register
+
+        </button>
+
+      `;
+
+      container.appendChild(div);
+
+    }
+  );
 }
 
 
@@ -495,82 +782,223 @@ function registerTournament(name) {
   addXP(25);
 
   notify(
-    `🏆 You're interested in ${name}! Check Discord for registration.`
+    `🏆 Registration started for ${name}!`
   );
 
-  joinDiscord();
+  setTimeout(() => {
+
+    joinDiscord();
+
+  }, 700);
 }
 
 
+/* =========================
+   UPDATE UI
+========================= */
+
 function updateUI() {
 
-  const rank = getRank();
+  const rank =
+    getRank();
 
-  document.getElementById("navUsername").textContent =
-    player.name;
-
-  document.getElementById("navLevel").textContent =
-    `LVL ${player.level}`;
-
-  document.getElementById("homeLevel").textContent =
-    player.level;
-
-  document.getElementById("homeRank").textContent =
-    `${rank.icon} ${rank.name}`;
-
-  document.getElementById("totalXP").textContent =
-    getTotalXP();
-
-  document.getElementById("xpAmount").textContent =
-    player.xp;
-
-  document.getElementById("xpNeeded").textContent =
-    requiredXP();
-
-  document.getElementById("wins").textContent =
-    player.wins;
-
-  document.getElementById("kills").textContent =
-    player.kills;
-
-  document.getElementById("matchCount").textContent =
-    player.matches;
-
-  document.getElementById("streak").textContent =
-    player.streak;
-
-  const percentage =
-    Math.min(
-      (player.xp / requiredXP()) * 100,
-      100
+  const navUsername =
+    document.getElementById(
+      "navUsername"
     );
 
-  document.getElementById("xpFill").style.width =
-    percentage + "%";
+  const navLevel =
+    document.getElementById(
+      "navLevel"
+    );
+
+  const homeLevel =
+    document.getElementById(
+      "homeLevel"
+    );
+
+  const homeRank =
+    document.getElementById(
+      "homeRank"
+    );
+
+  const totalXP =
+    document.getElementById(
+      "totalXP"
+    );
+
+  const xpAmount =
+    document.getElementById(
+      "xpAmount"
+    );
+
+  const xpNeeded =
+    document.getElementById(
+      "xpNeeded"
+    );
+
+  const wins =
+    document.getElementById(
+      "wins"
+    );
+
+  const kills =
+    document.getElementById(
+      "kills"
+    );
+
+  const matchCount =
+    document.getElementById(
+      "matchCount"
+    );
+
+  const streak =
+    document.getElementById(
+      "streak"
+    );
+
+  if (navUsername)
+    navUsername.textContent =
+      player.name;
+
+  if (navLevel)
+    navLevel.textContent =
+      `LVL ${player.level}`;
+
+  if (homeLevel)
+    homeLevel.textContent =
+      player.level;
+
+  if (homeRank)
+    homeRank.textContent =
+      `${rank.icon} ${rank.name}`;
+
+  if (totalXP)
+    totalXP.textContent =
+      getTotalXP();
+
+  if (xpAmount)
+    xpAmount.textContent =
+      player.xp;
+
+  if (xpNeeded)
+    xpNeeded.textContent =
+      requiredXP();
+
+  if (wins)
+    wins.textContent =
+      player.wins;
+
+  if (kills)
+    kills.textContent =
+      player.kills;
+
+  if (matchCount)
+    matchCount.textContent =
+      player.matches;
+
+  if (streak)
+    streak.textContent =
+      player.streak;
+
+  const xpFill =
+    document.getElementById(
+      "xpFill"
+    );
+
+  if (xpFill) {
+
+    const percentage =
+      Math.min(
+        (player.xp /
+          requiredXP()) * 100,
+        100
+      );
+
+    xpFill.style.width =
+      percentage + "%";
+  }
 
   renderRanks();
   renderLeaderboard();
 }
 
 
-document.addEventListener("keydown", event => {
+/* =========================
+   KEYBOARD SHORTCUTS
+========================= */
 
-  if (event.key === "1") showPage("home");
-  if (event.key === "2") showPage("messages");
-  if (event.key === "3") showPage("servers");
-  if (event.key === "4") showPage("promotions");
-  if (event.key === "5") showPage("ranks");
-  if (event.key === "6") showPage("voice");
-  if (event.key === "7") showPage("tournaments");
+document.addEventListener(
+  "keydown",
+  event => {
 
-});
+    // Don't navigate while typing
+    if (
+      event.target.tagName ===
+      "INPUT"
+    ) {
+      return;
+    }
+
+    const pages = {
+
+      "1": "home",
+
+      "2": "messages",
+
+      "3": "servers",
+
+      "4": "promotions",
+
+      "5": "ranks",
+
+      "6": "voice",
+
+      "7": "tournaments"
+
+    };
+
+    if (pages[event.key]) {
+
+      showPage(
+        pages[event.key]
+      );
+
+    }
+
+  }
+);
 
 
-renderMessages();
-renderServers();
-renderPromotions();
-renderVoice();
-renderTournaments();
-updateUI();
-saveGame();
+/* =========================
+   START APP
+========================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    console.log(
+      "⚡ Creator HQ loaded!"
+    );
+
+    renderMessages();
+
+    renderServers();
+
+    renderPromotions();
+
+    renderVoice();
+
+    renderTournaments();
+
+    updateUI();
+
+    saveGame();
+
+    // Always start on Home
+    showPage("home");
+
+  }
+);
 ```
